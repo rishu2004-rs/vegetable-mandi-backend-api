@@ -5,22 +5,15 @@ const cors = require('cors');
 const path = require('path');
 const { errorHandler } = require('./middlewares/errorMiddleware');
 
-
-
-// App create
 const app = express();
 
-// Connect DB
+// Connect database
 connectDB();
 
 // Middlewares
 app.use(cors());
-app.use(express.json());
-app.use(errorHandler);
 
-app.get('/', (req, res)=>{
-    res.send("Server is running");
-})
+// 🔴 IMPORTANT: DO NOT put express.json() before multer routes
 
 // Static folder for images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -30,10 +23,17 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 
+// ✅ JSON middleware AFTER routes
+app.use(express.json());
 
-// PORT
+app.get('/', (req, res) => {
+  res.send("Server is running");
+});
+
+app.use(errorHandler);
+
+// Port
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
+app.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
+);

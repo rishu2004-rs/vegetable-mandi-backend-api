@@ -1,19 +1,19 @@
 const Product = require('../models/product');
 
-// Get all
+// Get all products
 exports.getProducts = async (req, res) => {
   const products = await Product.find();
   res.json(products);
 };
 
-// Get one
+// Get single product
 exports.getProductById = async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) return res.status(404).json({ message: "Product not found" });
   res.json(product);
 };
 
-// Create
+// Create product ✅ FIXED
 exports.createProduct = async (req, res) => {
   try {
     const { name, category, price, unit, stock } = req.body;
@@ -24,31 +24,41 @@ exports.createProduct = async (req, res) => {
       price,
       unit,
       stock,
-      image: req.file ? req.file.filename : null
+      image: req.file ? `/uploads/${req.file.filename}` : null
     });
 
-    res.json({ message: "Product created", product });
+    res.status(201).json({
+      message: "Product created",
+      product
+    });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// Update
+// Update product ✅ FIXED
 exports.updateProduct = async (req, res) => {
   try {
     const data = req.body;
-    if (req.file) data.image = req.file.filename;
 
-    const product = await Product.findByIdAndUpdate(req.params.id, data, { new: true });
+    if (req.file) {
+      data.image = `/uploads/${req.file.filename}`;
+    }
 
-    res.json({ message: "Product Updated", product });
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      data,
+      { new: true }
+    );
+
+    res.json({ message: "Product updated", product });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// Delete
+// Delete product
 exports.deleteProduct = async (req, res) => {
   await Product.findByIdAndDelete(req.params.id);
-  res.json({ message: "Product Deleted" });
+  res.json({ message: "Product deleted" });
 };

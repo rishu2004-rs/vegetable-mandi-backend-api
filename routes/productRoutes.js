@@ -1,6 +1,7 @@
 const express = require('express');
 const { protect } = require('../middlewares/authMiddleware');
 const upload = require('../middlewares/uploadMiddleware');
+
 const {
   getProducts,
   getProductById,
