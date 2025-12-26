@@ -12,8 +12,8 @@ connectDB();
 
 // Middlewares
 app.use(cors());
-
-// 🔴 IMPORTANT: DO NOT put express.json() before multer routes
+app.use(express.json()); // ✅ MUST be before auth routes
+app.use(express.urlencoded({ extended: true }));
 
 // Static folder for images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -22,9 +22,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
-
-// ✅ JSON middleware AFTER routes
-app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send("Server is running");
