@@ -26,6 +26,7 @@ exports.createProduct = async (req, res) => {
       stock,
       image: req.file ? req.file.path : null
     });
+    console.log('Creates product with file:', req.file);
 
     res.status(201).json({
       message: "Product created",
@@ -43,6 +44,7 @@ exports.updateProduct = async (req, res) => {
 
     if (req.file) {
       data.image = req.file.path;
+      console.log('Updates product with file:', req.file);
     }
 
     const product = await Product.findByIdAndUpdate(
