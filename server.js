@@ -15,6 +15,14 @@ app.use(cors());
 app.use(express.json()); // ✅ MUST be before auth routes
 app.use(express.urlencoded({ extended: true }));
 
+// Compatibility Middleware: Redirect double URLs (e.g. localhost:5000/https://cloudinary...)
+app.use((req, res, next) => {
+  if (req.url.startsWith('/https://') || req.url.startsWith('/http://')) {
+    return res.redirect(req.url.substring(1));
+  }
+  next();
+});
+
 // Static folder for images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
